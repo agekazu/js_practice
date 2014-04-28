@@ -12,26 +12,53 @@
   </div>
   </body>
   <script type="text/javascript">
-  const MAX_ITEM = 12;
-  const IMAGEXSIZE = 221;
-  var th, x, y, locX, locY;
-  var _w = 2000;
-  var _h = 2000;
-  var k, speedX, speedY = new Array();
-  var radius = 580; 
-  var angle = 0;
-  var per = Math.PI*2.0 / MAX_ITEM; 
+    const MAX_ITEM = 12;
+    const IMAGEXSIZE = 221;
+    var th, x, y, locX, locY;
+    var _w = 2000;
+    var _h = 2000;
+    var k, speedX, speedY = new Array();
+    var radius = 580; 
+    var angle = 0;
+    var per = Math.PI*2.0 / MAX_ITEM; 
+    var cardList = new Array;
 
-  for(i=0; i<MAX_ITEM; i++) {
-    locX = Math.cos( angle ) * radius + _w / 2;
-    locY = Math.sin( angle ) * radius + _h / 2;
-    objAngle = angle - Math.PI/2;
-    $('.items').append('<div class="item-button" style="position: absolute; left:'+locX+'px; top:'+locY+'px; transform: rotate('+objAngle+'rad); -webkit-transform: rotate('+objAngle+'rad)" ></div>');
-    angle += per;
-  }
+    function Card(angle, cardId) {
+      this.angle = angle;
+      this.x = Math.cos(this.angle) * radius + _w / 2;
+      this.y = Math.sin(this.angle) * radius + _h / 2;
+      this.objAngle = angle - Math.PI/2;
+      this.cardId = cardId;
+      this.setPosition = function(x, y, objAngle, cardId) {
+        $('.items').append('<div class="item-button" id="card-'+cardId+'" style="position: absolute; left:'+x+'px; top:'+y+'px; transform: rotate('+objAngle+'rad); -webkit-transform: rotate('+objAngle+'rad)" ></div>');
+      }
 
-  setInterval(objAngle++, 100);
-console.log(objAngle);
+      this.changePosition = function(cardId) {
+        this.x = Math.cos(this.angle) * radius + _w / 2;
+        this.y = Math.sin(this.angle) * radius + _h / 2;
+        this.objAngle = this.angle - Math.PI/2;
+        console.log(this.angle);
+        $('#card-'+String(cardId)).css({
+            'position': 'absolute',
+            'left': this.x+'px',
+            'top' : this.y+'px',
+            'transform': 'rotate('+this.objAngle+'rad)',
+            '-webkit-transform': 'rotate('+this.objAngle+'rad)'
+        });
+      }
+      this.setPosition(this.x, this.y, this.objAngle, this.cardId);
+    }
+
+    for(cardId=0; cardId<MAX_ITEM; cardId++) {
+      cardList.push(new Card(angle, cardId));
+      angle += per;
+    }
+
+       setInterval(function() {
+       cardList.forEach(function(element, index){
+         element.angle += 1/(2*Math.PI);
+         element.changePosition(index);
+       });
+       }, 1000);
   </script>
-</html>
-
+  </html>
